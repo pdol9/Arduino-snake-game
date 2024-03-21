@@ -23,8 +23,18 @@
 #define CLK_PIN 13
 #define CS_PIN 5
 
+enum  direction {
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT
+};
+
+enum direction current_dirrection = RIGHT;
+
 MAX7219 <CLK_PIN, DIN_PIN, CS_PIN> led;
 
+// potentiometer
 const int game_speed_sensor = A0;
 // joystick controller
 const int y_axis = A1;
@@ -136,36 +146,82 @@ int  check_food() {
   return 0;
 }
 
+inline void change_direction() {
+
+  switch (current_dirrection) {
+    case UP: move_up(); break;
+    case DOWN: move_down(); break;
+    case LEFT: move_left(); break;
+    case RIGHT: move_right(); break;
+  }
+}
+
+inline void	update_direction() {
+
+  int pos_x = analogRead(x_axis);
+  int pos_y = analogRead(y_axis);
+  if (x_axis / 100 < 1 && y_axis / 100 < 10)
+	  current_dirrection = UP;
+  // ...
+  Serial.print("pos_x: ");
+  Serial.println(pos_x);
+  Serial.print("pos_y: ");
+  Serial.println(pos_y);
+}
+
 inline void  move_down() {
-
+  if (current_dirrection == UP)
+    return;
+  if (snake_position_x == 0)
+    snake_position_x = 8;
+  --snake_position_x;
+  led.dot(snake_position_x, snake_position_y, 1);
+  transition(200);
+  led.dot(snake_position_x, snake_position_y, 0);
+  current_dirrection = DOWN;
 }
-inline void move_right() {
 
-}
 inline void move_up() {
-  if (snake_position_y == 7)
-    snake_position_y = 0;
-  else
-    ++snake_position_y;
+  if (current_dirrection == DOWN)
+    return;
+  if (snake_position_x == 7)
+    snake_position_x = -1;
+  ++snake_position_x;
+  led.dot(snake_position_x, snake_position_y, 1);
+  transition(200);
+  led.dot(snake_position_x, snake_position_y, 0);
+  current_dirrection = UP;
 }
+
+inline void move_right() {
+  if (current_dirrection == LEFT)
+    return;
+  if (snake_position_y == 7)
+    snake_position_y = -1;
+  ++snake_position_y;
+  led.dot(snake_position_x, snake_position_y, 1);
+  transition(200);
+  led.dot(snake_position_x, snake_position_y, 0);
+  current_dirrection = RIGHT;
+
+}
+
 inline void move_left() {
+  if (current_dirrection == RIGHT)
+    return;
   if (snake_position_y == 0)
     snake_position_y = 8;
   --snake_position_y;
-    led.dot(snake_position_x, snake_position_y, 1);
-    transition(200);
-    led.dot(snake_position_x, snake_position_y, 0);
+  led.dot(snake_position_x, snake_position_y, 1);
+  transition(200);
+  led.dot(snake_position_x, snake_position_y, 0);
+  current_dirrection = LEFT;
 }
 
 void loop() {
 
-  int pos_x = analogRead(x_axis);
-  int pos_y = analogRead(y_axis);
-  // Serial.println(pos_x);
-  // Serial.println(pos_y);
-  move_left();
-  // if (check_food() == 1)
-  //   update_food();
+  update_direction();
+  change_direction();
 
   // read the state of the reset button value:
   int reading_reset = digitalRead(reset_button_score);
