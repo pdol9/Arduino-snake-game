@@ -1,21 +1,21 @@
 /*
-	Snake game
+   Snake game
 
-	Playing snake on a LED matrix MAX7219.
+   Playing snake on a LED matrix MAX7219.
 
-	The circuit:
-	- red and green LED attached from pin 8 and 9 respectively to ground through 220 ohm resistors
-	- pushbutton (reset button) attached to pin 2 from +5V with 10K resistor attached to pushbutton
-    from ground
-  - 10k potentiometer (game's speed controller) attached to A0, with other connectors to ground and 5V
+   The circuit:
+   - red and green LED attached from pin 8 and 9 respectively to ground through 220 ohm resistors
+   - pushbutton (reset button) attached to pin 2 from +5V with 10K resistor attached to pushbutton
+   from ground
+   - 10k potentiometer (game's speed controller) attached to A0, with other connectors to ground and 5V
 
-	- LED matrix max7219 8x8
-		* VCC: to Arduino 5V
-		* GND: to Arduino GND
-		* DIN (Data In): to pin 11
-		* CLK (Clock): to pin 13
-		* CS (Chip Select): to pin 5
-*/
+   - LED matrix max7219 8x8
+ * VCC: to Arduino 5V
+ * GND: to Arduino GND
+ * DIN (Data In): to pin 11
+ * CLK (Clock): to pin 13
+ * CS (Chip Select): to pin 5
+ */
 
 #include <GyverMAX7219.h>
 
@@ -24,13 +24,14 @@
 #define CS_PIN 5
 
 enum  direction {
-  UP,
-  DOWN,
-  LEFT,
-  RIGHT
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
 };
 
-enum direction current_dirrection = RIGHT;
+enum direction current_direction = RIGHT;
+enum direction previous_direction = RIGHT;
 
 MAX7219 <CLK_PIN, DIN_PIN, CS_PIN> led;
 
@@ -51,190 +52,205 @@ unsigned char snake_position_y = 5;
 unsigned char food[2];
 
 inline void  transition(int added_time) {
-    led.update();
-    delay(100 + added_time);
+	led.update();
+	delay(100 + added_time);
 }
 
 void greeting_screen(unsigned int fill) {
 
-  for (int i = 0; i < 8; ++i) {
-    transition(0);
-    led.dot(i, 0, fill);
-  }
-  for (int i = 1; i < 8; ++i) {
-    transition(0);
-    led.dot(7, i, fill);
-  }
-  for (int i = 6; i >= 0; --i) {
-    transition(0);
-    led.dot(i, 7, fill);
-  }
-  for (int i = 6; i > 1; --i) {
-    transition(0);
-    led.dot(0, i, fill);
-  }
-  led.dot(1, 2, fill);
-  if (fill == 0)
-    transition(2000);
-/// S letter
-  for (int i = 2; i < 6; ++i) {
-    transition(0);
-    led.dot(2, i, fill);
-  }
-  led.dot(3, 5, fill);
-  transition(0);
-  for (int i = 5; i > 1; --i) {
-    led.dot(4, i, fill);
-    transition(0);
-  }
-  led.dot(5, 2, fill);
-  transition(0);
-  for (int i = 2; i < 6; ++i) {
-    led.dot(6, i, fill);
-    transition(0);
-  }
+	for (int i = 0; i < 8; ++i) {
+		transition(0);
+		led.dot(i, 0, fill);
+	}
+	for (int i = 1; i < 8; ++i) {
+		transition(0);
+		led.dot(7, i, fill);
+	}
+	for (int i = 6; i >= 0; --i) {
+		transition(0);
+		led.dot(i, 7, fill);
+	}
+	for (int i = 6; i > 1; --i) {
+		transition(0);
+		led.dot(0, i, fill);
+	}
+	led.dot(1, 2, fill);
+	if (fill == 0)
+		transition(2000);
+	/// S letter
+	for (int i = 2; i < 6; ++i) {
+		transition(0);
+		led.dot(2, i, fill);
+	}
+	led.dot(3, 5, fill);
+	transition(0);
+	for (int i = 5; i > 1; --i) {
+		led.dot(4, i, fill);
+		transition(0);
+	}
+	led.dot(5, 2, fill);
+	transition(0);
+	for (int i = 2; i < 6; ++i) {
+		led.dot(6, i, fill);
+		transition(0);
+	}
 }
 
 void setup() {
-  Serial.begin(9600);
- 
-  // initialize the LED pin as an output:
-  pinMode(red_led, OUTPUT);
-  pinMode(green_led, OUTPUT);
-  
-  // initialize the reset button pin as an input:
-  pinMode(reset_button_score, INPUT);
-  
-  // LED matrix
-  led.begin();
-  led.clear();
+	Serial.begin(9600);
 
-  digitalWrite(red_led, HIGH);
-  digitalWrite(green_led, HIGH);
-  delay(2000);
-  digitalWrite(red_led, LOW);
-  
-  int fill = 2;
+	// initialize the LED pin as an output:
+	pinMode(red_led, OUTPUT);
+	pinMode(green_led, OUTPUT);
 
-repeat:
-  fill -= 1;
-  greeting_screen(fill);
-  if (fill == 1)
-    goto repeat;
+	// initialize the reset button pin as an input:
+	pinMode(reset_button_score, INPUT);
 
-  led.update();
-  delay(3000);
-  set_food();
+	// LED matrix
+	led.begin();
+	led.clear();
+
+	digitalWrite(red_led, HIGH);
+	digitalWrite(green_led, HIGH);
+	delay(2000);
+	digitalWrite(red_led, LOW);
+
+	int fill = 2;
+
+	// repeat:
+	//   fill -= 1;
+	//   greeting_screen(fill);
+	//   if (fill == 1)
+	//     goto repeat;
+
+	//   led.update();
+	//   delay(3000);
+	//   set_food();
 }
 void  set_food() {
-  food[0] = 4;
-  food[1] = 4;
-  led.dot(food[0], food[1], 1);
-  led.update();
+	food[0] = 4;
+	food[1] = 4;
+	led.dot(food[0], food[1], 1);
+	led.update();
 }
 void  update_food() {
-  led.dot(food[0], food[1], 0);
-  food[1] = 8 - snake_position_x;
-  food[0] = 8 - snake_position_y;
-  led.dot(food[0], food[1], 1);
-  led.update();
+	led.dot(food[0], food[1], 0);
+	food[1] = 8 - snake_position_x;
+	food[0] = 8 - snake_position_y;
+	led.dot(food[0], food[1], 1);
+	led.update();
 }
 
 int  check_food() {
-  if (snake_position_x == food[0] || snake_position_y == food[1])
-    return 1;
-  return 0;
-}
-
-inline void change_direction() {
-
-  switch (current_dirrection) {
-    case UP: move_up(); break;
-    case DOWN: move_down(); break;
-    case LEFT: move_left(); break;
-    case RIGHT: move_right(); break;
-  }
+	if (snake_position_x == food[0] || snake_position_y == food[1])
+		return 1;
+	return 0;
 }
 
 inline void	update_direction() {
 
-  int pos_x = analogRead(x_axis);
-  int pos_y = analogRead(y_axis);
-  if (x_axis / 100 < 1 && y_axis / 100 < 10)
-	  current_dirrection = UP;
-  // ...
-  Serial.print("pos_x: ");
-  Serial.println(pos_x);
-  Serial.print("pos_y: ");
-  Serial.println(pos_y);
+	int pos_x = analogRead(x_axis);
+	int pos_y = analogRead(y_axis);
+//	Serial.print("pos_x: ");
+//	Serial.println(pos_x / 100);
+//	Serial.print("pos_y: ");
+//	Serial.println(pos_y / 100);
+
+	if (pos_x > 900)
+		current_direction = DOWN;
+	else if (pos_x < 10)
+		current_direction = UP;
+	else if (pos_y > 900)
+		current_direction = LEFT;
+	else if (pos_y < 10)
+		current_direction = RIGHT;
 }
 
-inline void  move_down() {
-  if (current_dirrection == UP)
-    return;
-  if (snake_position_x == 0)
-    snake_position_x = 8;
-  --snake_position_x;
-  led.dot(snake_position_x, snake_position_y, 1);
-  transition(200);
-  led.dot(snake_position_x, snake_position_y, 0);
-  current_dirrection = DOWN;
+inline void change_direction() {
+
+	switch (current_direction) {
+		case UP: move_up(); break;
+		case DOWN: move_down(); break;
+		case LEFT: move_left(); break;
+		case RIGHT: move_right(); break;
+	}
 }
 
 inline void move_up() {
-  if (current_dirrection == DOWN)
-    return;
-  if (snake_position_x == 7)
-    snake_position_x = -1;
-  ++snake_position_x;
-  led.dot(snake_position_x, snake_position_y, 1);
-  transition(200);
-  led.dot(snake_position_x, snake_position_y, 0);
-  current_dirrection = UP;
+	if (previous_direction == DOWN) {
+		move_down();					// ignore command of going into opposite direction
+		return;
+	}
+	if (snake_position_x == 7)
+		snake_position_x = -1;
+	++snake_position_x;
+	led.dot(snake_position_x, snake_position_y, 1);
+	transition(200);
+	led.dot(snake_position_x, snake_position_y, 0);
+	previous_direction = UP;
+}
+
+inline void  move_down() {
+	if (previous_direction == UP) {
+		move_up();
+		return;
+	}
+	if (snake_position_x == 0)
+		snake_position_x = 8;
+	--snake_position_x;
+	led.dot(snake_position_x, snake_position_y, 1);
+	transition(200);
+	led.dot(snake_position_x, snake_position_y, 0);
+	previous_direction = DOWN;
 }
 
 inline void move_right() {
-  if (current_dirrection == LEFT)
-    return;
-  if (snake_position_y == 7)
-    snake_position_y = -1;
-  ++snake_position_y;
-  led.dot(snake_position_x, snake_position_y, 1);
-  transition(200);
-  led.dot(snake_position_x, snake_position_y, 0);
-  current_dirrection = RIGHT;
-
+	if (previous_direction == LEFT) {
+		move_left();
+		return;
+	}
+	if (snake_position_y == 7)
+		snake_position_y = -1;
+	++snake_position_y;
+	led.dot(snake_position_x, snake_position_y, 1);
+	transition(200);
+	led.dot(snake_position_x, snake_position_y, 0);
+	previous_direction = RIGHT;
 }
 
 inline void move_left() {
-  if (current_dirrection == RIGHT)
-    return;
-  if (snake_position_y == 0)
-    snake_position_y = 8;
-  --snake_position_y;
-  led.dot(snake_position_x, snake_position_y, 1);
-  transition(200);
-  led.dot(snake_position_x, snake_position_y, 0);
-  current_dirrection = LEFT;
+	if (previous_direction == RIGHT) {
+		move_right();
+		return;
+	}
+	if (snake_position_y == 0)
+		snake_position_y = 8;
+	--snake_position_y;
+	led.dot(snake_position_x, snake_position_y, 1);
+	transition(200);
+	led.dot(snake_position_x, snake_position_y, 0);
+	previous_direction = LEFT;
 }
 
 void loop() {
 
-  update_direction();
-  change_direction();
+	update_direction();
+	change_direction();
 
-  // read the state of the reset button value:
-  int reading_reset = digitalRead(reset_button_score);
-  if (reading_reset == HIGH) {
-      digitalWrite(red_led, HIGH);
-      digitalWrite(green_led, LOW);
-      delay(2000);
-      digitalWrite(red_led, LOW);
-      digitalWrite(green_led, HIGH);
-  }
-  float reading_speed = analogRead(game_speed_sensor) * (5.0 / 1023.0);
-  // Serial.print("Value of reading speed: ");
-  // Serial.println(reading_speed);
-  // delay(200);
-  int game_speed = reading_speed / 4;
+	// read the state of the reset button value:
+	int reading_reset = digitalRead(reset_button_score);
+	if (reading_reset == HIGH) {
+		digitalWrite(red_led, HIGH);
+		digitalWrite(green_led, LOW);
+		delay(2000);
+		digitalWrite(red_led, LOW);
+		digitalWrite(green_led, HIGH);
+	}
+	float reading_speed = analogRead(game_speed_sensor) * (5 / 1023.0);
+	// Serial.print("Value of reading speed: ");
+	// Serial.println(reading_speed);
+	// delay(200);
+	int game_speed = reading_speed / 4;
+	// TODO
+	// include value of potentiometer to regulate speed of the snake
 }
