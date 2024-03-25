@@ -19,3 +19,9 @@
 - 4 digit display
 - push / switch button
 
+## TODO
+
+- make snake bigger / grow
+- snake collision
+- display score
+- add score reset buttom
