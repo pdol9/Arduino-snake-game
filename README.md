@@ -6,9 +6,11 @@
 
 ## Installation
 
+	Using Arduino IDE compile and upload code to Arduino.
 
 ## Usage
 
+	Use joystick to navigate snack, potentiometer to slow down / speed up.
 
 ## Board Curcuit
 
@@ -21,7 +23,7 @@
 
 ## TODO
 
-- make snake bigger / grow
+- make snake bigger / grow (WIP)
 - snake collision
 - display score
 - add score reset buttom
