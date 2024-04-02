@@ -14,10 +14,10 @@
 
 	Use:
 	* joystick to navigate snake
-		- Up: ↑     
-		- Down: ↓     
-		- Left: ←     
-		- Right: →
+	  - Up: ↑     
+	  - Down: ↓     
+	  - Left: ←     
+	  - Right: →
 	* potentiometer to slow down / speed up (turn 45 degrees to the left / right).
 
 ## Neccessary Components for the game
