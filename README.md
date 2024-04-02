@@ -8,13 +8,19 @@
 
 	To assemble hardware see description in file Snake.ino
 
-	Using Arduino IDE compile and upload code to Arduino.
+	Using Arduino IDE compile and upload the code to Arduino.
 
 ## Usage
 
-	Use joystick to navigate snake, potentiometer to slow down / speed up.
+	Use:
+	* joystick to navigate snake
+		- Up: ↑     
+		- Down: ↓     
+		- Left: ←     
+		- Right: →
+	* potentiometer to slow down / speed up (turn 45 degrees to the left / right).
 
-## Board Curcuit
+## Neccessary Components for the game
 
 - Uno R3 controller board
 - joystick module
