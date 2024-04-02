@@ -1,4 +1,4 @@
-# Snake game on Arduino board
+# Snake game based on Arduino board
 
 ## Current status
 
@@ -27,4 +27,4 @@
 
 - snake collision
 - display score
-- add score reset buttom
+- add score reset button
