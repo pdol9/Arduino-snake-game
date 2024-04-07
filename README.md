@@ -20,7 +20,7 @@
 	  - Right: →
 	* potentiometer to slow down / speed up (turn 45 degrees to the left / right).
 
-## Neccessary Components for the game
+## Necessary Components for the game
 
 - Uno R3 controller board
 - joystick module
