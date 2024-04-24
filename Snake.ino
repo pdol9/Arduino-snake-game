@@ -4,7 +4,7 @@
    Playing snake on a LED matrix MAX7219.
 
    The circuit:
-	 * red and green LED attached from pin 8 and 9 respectively to ground through 220 ohm resistors
+	 * RGB LED attached from pin x, 8 and 9 respectively to ground through 220 ohm resistors
 	 * pushbutton (reset button) attached to pin 2 from +5V with 10K resistor attached to pushbutton
 	 from ground
 	 * 10k potentiometer (game's speed controller) attached to A0, with other connectors to ground and 5V
@@ -14,7 +14,7 @@
 		 - DIN (Data In): to pin 11
 		 - CLK (Clock): to pin 13
 		 - CS (Chip Select): to pin 5
- */
+*/
 
 #include <GyverMAX7219.h>
 
@@ -50,6 +50,7 @@ const int x_axis = A2;
 const int reset_button_score = 2;
 const int red_led = 8;
 const int green_led = 9;
+// const int blue_led = x;
 
 unsigned int snake_length = 1;
 unsigned int food[2];
@@ -80,24 +81,22 @@ void setup() {
 	digitalWrite(red_led, LOW);
 
 	for (int i = 0; i < 64; ++i) {
-		snake[i].x_coor = 0;
-		snake[i].y_coor = 0;
+		snake[i].x_coor = -1;
+		snake[i].y_coor = -1;
 	}
 	snake[0].x_coor = 3;
 	snake[0].y_coor = 3;
 
 	//run greeting screen
-	for (int clear_greeting_screen = 1; clear_greeting_screen > -1; --clear_greeting_screen) {
-		greeting_screen(clear_greeting_screen);
-	}
-	delay(500);
+//	for (int clear_greeting_screen = 1; clear_greeting_screen > -1; --clear_greeting_screen) {
+//		greeting_screen(clear_greeting_screen);
+//	}
+//	delay(500);
 	led.update();
 	reset_food_coor();
 }
 
 /// main function
-
-// TODO snake collision
 
 void loop() {
 
