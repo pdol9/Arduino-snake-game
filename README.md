@@ -48,13 +48,13 @@ finds food, it lights up green.
 ### Hardware Components
 
 - Arduino MEGA 2560 R3 board
-- 1x LED matrix MAX7219
+- 1x LED Display MAX7219
 - joystick module
-- potentiometer 10k
+- potentiometer 10 kΩ
 - 2x push button
 - 1x RGB led
-- 3x 330 Ohm resistors
-- 1x 10k resistor
+- 3x 330 Ω resistor
+- 1x 10 kΩ resistor
 - jump wires
 - breadboard
 
@@ -67,8 +67,8 @@ finds food, it lights up green.
 * Connect a 10 kΩ potentiometer (game speed control) to A0, with the other pins
   to GND and 5V
 * LED Display matrix (MAX7219):
-	- VCC: to Arduino 5V pin
-	- GND: to Arduino GND pin
+	- VCC: Arduino 5V pin
+	- GND: Arduino GND pin
 	- DIN (Data In): pin 41
 	- CLK (Clock): pin 45
 	- CS (Chip Select): pin 43
